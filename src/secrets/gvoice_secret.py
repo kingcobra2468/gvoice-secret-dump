@@ -51,7 +51,7 @@ class GVoiceSecret:
         secrets = dict()
         secrets['cookies'] = self._driver.get_cookies()
         secrets['gvoice_key'] = self.__get_key(self._driver.page_source)
-        
+
         phone_number = self.__get_phone_number(self._driver.page_source)
         secrets['phone_number'] = phone_number
         if to_file:
@@ -81,14 +81,26 @@ class GVoiceSecret:
         return key
 
     def __get_phone_number(self, gvoice_source):
+        """Extracts the Google voice number for the given account
+
+        Args:
+            gvoice_source (str): source for the Google voice page. 
+
+        Raises:
+            ValueError: raised if phone number not found.
+
+        Returns:
+            str: the google voice phone number. 
+        """
         matches = re.search(r'phnnmbr.*"\+(1[0-9]{10})"',
                             gvoice_source, re.MULTILINE)
         if not matches:
-            raise ValueError('Unable to find GVoice key.')
+            raise ValueError(
+                'Unable to find GVoice phone number. Have you added a number for this account?')
         key = matches.groups()[0]
 
         return key
-    
+
     def login(self):
         """Login into the google account and navigate to the Google voice page.
         """
