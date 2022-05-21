@@ -21,3 +21,43 @@ The following steps need to done before running the `secret_dump.py` script:
 4. Set the environment varaibles as described in [config](#config).
 5. Navigate to `src/` and run the script with `python3 secret_dump.py`. The
    secrets will be dumped into a `secrets.json` file.
+
+## **Handling Wrong Chrome Version Error**
+The following error might pop up when the script is run:
+```
+selenium.common.exceptions.WebDriverException: Message: unknown error: cannot connect to chrome at 127.0.0.1:50107
+from session not created: This version of ChromeDriver only supports Chrome version 101
+Current browser version is 98.0.4692.71
+```
+
+In the case of the error, you would need to set the chrome driver
+version as the major release of the currently installed browser. In this
+case it would be **98**. To set it, pass it as an arg when running 
+such as: 
+```
+python3 secret_dump.py 98
+```  
+
+## **Using GVoiceSecretDump as a Library**
+GVoiceSecretDump can also be utilized as a package for other Python projects. Simply
+install it with: 
+```
+pip3 install git+https://github.com/kingcobra2468/GVoiceSecretDump
+```
+
+### **Sample usage**
+Example of logging in and getting secret dump.
+```python
+from gvoicesecretdump.secrets.gvoice_secret import GVoiceSecret
+
+username='username@gmail.com'
+password='password'
+
+# geckodriver chrome version
+chrome_version = 100
+
+account = GVoiceSecret(username, password, chrome_version)
+account.login()
+
+print(f'secrets: {account.dump_secrets()}')
+```
