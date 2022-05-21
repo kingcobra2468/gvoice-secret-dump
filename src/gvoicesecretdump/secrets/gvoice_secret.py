@@ -12,15 +12,19 @@ class GVoiceSecret:
     Google Voice.
     """
 
-    def __init__(self, email, password):
+    def __init__(self, email, password, chrome_version=None):
         """Constructor.
 
         Args:
             email (str): Google email.
             password (str): Google password.
+            chrome_version (str): Chrome version to use. In the case of this
+            error: https://github.com/ultrafunkamsterdam/undetected-chromedriver#words-of-wisdom ,
+            pass in the Chrome version that is already installed.
         """
         self._email = email
         self._password = password
+        self._chrome_version = chrome_version
         self._driver = None
 
         self._init_driver()
@@ -32,8 +36,8 @@ class GVoiceSecret:
         options.add_argument('--disable-gpu')
         options.add_argument('--window-size=1920,1080')
         options.add_argument('--start-maximized')
-
-        self._driver = uc.Chrome(options=options)
+        self._driver = uc.Chrome(
+            options=options, version_main=self._chrome_version)
 
     def dump_secrets(self, to_file=False, dir=None):
         """Fetches the cookie and gvoice key secrets.
