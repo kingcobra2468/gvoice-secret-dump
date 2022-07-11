@@ -38,11 +38,11 @@ such as:
 python3 secret_dump.py 98
 ```  
 
-## **Using GVoiceSecretDump as a Library**
-GVoiceSecretDump can also be utilized as a package for other Python projects. Simply
+## **Using GVoice Secret Dump as a Library**
+Google voice secret dump can also be utilized as a package for other Python projects. Simply
 install it with: 
 ```
-pip3 install git+https://github.com/kingcobra2468/GVoiceSecretDump
+pip3 install git+https://github.com/kingcobra2468/gvoice-secret-dump
 ```
 
 ### **Sample usage**
