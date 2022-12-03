@@ -33,9 +33,6 @@ class GVoiceSecret:
         """Initialize the Chrome webdriver.
         """
         options = uc.ChromeOptions()
-        options.add_argument('--disable-gpu')
-        options.add_argument('--window-size=1920,1080')
-        options.add_argument('--start-maximized')
         self._driver = uc.Chrome(
             options=options, version_main=self._chrome_version)
 
