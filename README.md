@@ -1,5 +1,5 @@
 # **Google Voice Secret Dump**
-Selenium-based Python3.7+ cookie and API key dump for Google Voice service. Utilized
+Selenium-based Python3.10+ cookie and API key dump for Google Voice service. Utilized
 for accessing the internal Google Voice API. 
 
 ## **Limitations**
