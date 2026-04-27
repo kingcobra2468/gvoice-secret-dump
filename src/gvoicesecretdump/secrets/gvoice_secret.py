@@ -1,4 +1,5 @@
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import os.path
 from time import sleep
@@ -106,8 +107,8 @@ class GVoiceSecret:
         """Login into the google account and navigate to the Google voice page.
         """
         self._driver.get('https://www.google.com/')
-        self._driver.find_element_by_link_text("Sign in").click()
-        email_entry = self._driver.find_element_by_id('identifierId')
+        self._driver.find_element(By.LINK_TEXT, "Sign in").click()
+        email_entry = self._driver.find_element(By.ID, 'identifierId')
         email_entry.send_keys(self._email)
         sleep(2)
         email_entry.send_keys(Keys.TAB + Keys.TAB + Keys.TAB + Keys.ENTER)

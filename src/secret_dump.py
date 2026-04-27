@@ -10,7 +10,7 @@ def get_chrome_version():
         str|None: Chrome version if passed. None otherwise.
     """
     if len(sys.argv) == 2:
-        return sys.argv[1]
+        return int(sys.argv[1])
     
     return None
 
