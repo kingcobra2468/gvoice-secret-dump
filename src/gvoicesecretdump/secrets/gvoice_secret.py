@@ -117,3 +117,4 @@ class GVoiceSecret:
                                              Keys.TAB + Keys.TAB + Keys.ENTER).perform()
         sleep(2)
         self._driver.get('https://voice.google.com/u/0/')
+        sleep(2)
