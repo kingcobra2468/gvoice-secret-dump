@@ -1,151 +1,63 @@
-# Google Secrets Dump
+# **Google Voice Secret Dump**
+Selenium-based Python3.10+ cookie and API key dump for Google Voice service. Utilized
+for accessing the internal Google Voice API. 
 
-Selenium-based secret and cookie dumper for Google Voice and YouTube Music.
+## **Limitations**
+Due to Google's automation detection, it is necessary to run the script in a
+non-headless environment. Otherwise, the script will not function properly. It
+is also assumed this Google account is not making use of 2FA and has finished
+the initial setup.
 
-## Requirements
+## **Config**
+The following environment variables need to be set prior to running the script:
+- **GVOICE_EMAIL=** the Google email for the account.
+- **GVOICE_PASSWORD=** the Google password for the account.
 
-1. Python 3.10+
-2. A Google account that can sign in without 2FA challenge during automation
-3. Environment variables:
-    1. `GVOICE_EMAIL`
-    2. `GVOICE_PASSWORD`
+## **Setup**
+The following steps need to done before running the `secret_dump.py` script:
+1. Ensure that a Python3.7+ environment has already been setup.
+2. Ensure the Chrome geckodriver has been setup on the machine.
+3. Install dependencies with `pip3 install -r requirements.txt`.
+4. Set the environment varaibles as described in [config](#config).
+5. Navigate to `src/` and run the script with `python3 secret_dump.py`. The
+   secrets will be dumped into a `secrets.json` file.
 
-## CLI Usage
-
-Run from the project root:
-
-```bash
-python src/secret_dump.py [--chrome-version <major>] <service> <command>
+## **Handling Wrong Chrome Version Error**
+The following error might pop up when the script is run:
+```
+selenium.common.exceptions.WebDriverException: Message: unknown error: cannot connect to chrome at 127.0.0.1:50107
+from session not created: This version of ChromeDriver only supports Chrome version 101
+Current browser version is 98.0.4692.71
 ```
 
-Values:
+In the case of the error, you would need to set the chrome driver
+version as the major release of the currently installed browser. In this
+case it would be **98**. To set it, pass it as an arg when running 
+such as: 
+```
+python3 secret_dump.py 98
+```  
 
-1. `service`: `gvoice` or `ytmusic`
-2. `command`: `login` or `refresh`
-
-Examples:
-
-```bash
-python src/secret_dump.py gvoice login
-python src/secret_dump.py ytmusic refresh
-python src/secret_dump.py --chrome-version 151 ytmusic login
+## **Using GVoice Secret Dump as a Library**
+Google voice secret dump can also be utilized as a package for other Python projects. Simply
+install it with: 
+```
+pip3 install git+https://github.com/kingcobra2468/gvoice-secret-dump
 ```
 
-Output files are written to the current working directory:
+### **Sample usage**
+Example of logging in and getting secret dump.
+```python
+from gvoicesecretdump.secrets.gvoice_secret import GVoiceSecret
 
-1. `<service>_secrets.json`
-2. `<service>_cookies.txt`
+username='username@gmail.com'
+password='password'
 
-For `refresh`, run in a directory that already contains `<service>_secrets.json`.
+# geckodriver chrome version
+chrome_version = 100
 
-## Local Development Setup
+account = GVoiceSecret(username, password, chrome_version)
+account.login()
 
-With `uv`:
-
-```bash
-uv sync
-export GVOICE_EMAIL="you@example.com"
-export GVOICE_PASSWORD="your-password"
-python src/secret_dump.py gvoice login
+print(f'secrets: {account.dump_secrets()}')
 ```
-
-With `pip`:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-export GVOICE_EMAIL="you@example.com"
-export GVOICE_PASSWORD="your-password"
-python src/secret_dump.py gvoice login
-```
-
-## Docker Usage
-
-Build:
-
-```bash
-docker build -t gvoice-secret-dump:local .
-```
-
-Run login and persist outputs to host:
-
-```bash
-mkdir -p output
-docker run --rm \
-   --shm-size=2g \
-   -e GVOICE_EMAIL="you@example.com" \
-   -e GVOICE_PASSWORD="your-password" \
-   -v "$PWD/output:/home/chromeuser/output" \
-   gvoice-secret-dump:local \
-   ytmusic login
-```
-
-Run with explicit Chrome major version:
-
-```bash
-docker run --rm \
-   --shm-size=2g \
-   -e GVOICE_EMAIL="you@example.com" \
-   -e GVOICE_PASSWORD="your-password" \
-   -v "$PWD/output:/home/chromeuser/output" \
-   gvoice-secret-dump:local \
-   --chrome-version=151 ytmusic login
-```
-
-Run refresh:
-
-```bash
-docker run --rm \
-   --shm-size=2g \
-   -e GVOICE_EMAIL="you@example.com" \
-   -e GVOICE_PASSWORD="your-password" \
-   -v "$PWD/output:/home/chromeuser/output" \
-   gvoice-secret-dump:local \
-   ytmusic refresh
-```
-
-Interactive shell workflow:
-
-```bash
-docker run --rm -it \
-   --shm-size=2g \
-   -e GVOICE_EMAIL="you@example.com" \
-   -e GVOICE_PASSWORD="your-password" \
-   -v "$PWD/output:/home/chromeuser/output" \
-   --entrypoint bash \
-   gvoice-secret-dump:local
-```
-
-Then run commands inside the container:
-
-```bash
-/usr/local/bin/entrypoint.sh ytmusic login
-/usr/local/bin/entrypoint.sh ytmusic refresh
-/usr/local/bin/entrypoint.sh gvoice login
-```
-
-Important:
-
-1. Mount `/home/chromeuser/output` only.
-2. Do not mount over application paths.
-3. Use `--shm-size=2g` to reduce Chrome tab crashes.
-
-## Troubleshooting
-
-### `WebDriverException: tab crashed`
-
-1. Use `--shm-size=2g` with Docker.
-2. Pass `--chrome-version <major>` if driver/browser mismatch is suspected.
-3. Rebuild image after Dockerfile changes: `docker build --no-cache -t gvoice-secret-dump:local .`
-
-### `PermissionError` writing output files
-
-This is typically a host bind-mount permissions issue on `./output`.
-
-```bash
-mkdir -p output
-chmod 777 output
-```
-
-Or create output with your own user and avoid root-owned files from earlier runs.
